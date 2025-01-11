@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: robokart 
+  labels:
+    name: redis
+    project: robokart
+    app: db
+spec:
+  ports:
+  - port: 6379
+    name: redis
+  clusterIP: None
+  selector:
+    name: redis
+    project: robokart
+    app: db

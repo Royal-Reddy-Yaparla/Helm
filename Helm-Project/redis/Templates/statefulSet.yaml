@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: robokart 
+  labels:
+    name: redis
+    project: robokart
+    app: db
+spec:
+  selector:
+    matchLabels:
+      name: redis
+      project: robokart
+      app: db # has to match .spec.template.metadata.labels
+  serviceName: "redis"
+  replicas: {{ .Values.statefulSet.replicas }} # by default is 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        name: redis
+        project: robokart
+        app: db # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: redis
+        image: iamroyalreddy/redis:{{ .Values.statefulSet.imageVersion }}
+        imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
+        volumeMounts:
+        - name: redis
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "ebs-sc"
+      resources:
+        requests:
+          storage: 1Gi
