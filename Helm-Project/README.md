@@ -41,3 +41,28 @@ Install the latest release of the driver.
 ```
     kubectl apply -f namespace.yaml
 ```
+
+### Change Default namespace 
+```
+    sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
+    sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+    sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
+```
+
+```
+kubens robokart
+```
+
+**resource**: https://github.com/ahmetb/kubectx
+
+
+### K9 install for UI view of pods
+
+```
+curl -sS https://webinstall.dev/k9s | bash
+
+```
+steps:
+    - take new tab
+    - command ``` k9s```
+**resource**:  https://github.com/derailed/k9s
