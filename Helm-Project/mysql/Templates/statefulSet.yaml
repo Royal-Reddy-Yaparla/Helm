@@ -28,6 +28,8 @@ spec:
       - name: mysql
         image: iamroyalreddy/mysql:{{ .Values.statefulSet.imageVersion }}
         imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
+        args:
+          - "--ignore-db-dir=lost+found"
         envFrom:
           - secretRef:
               name: mysql
