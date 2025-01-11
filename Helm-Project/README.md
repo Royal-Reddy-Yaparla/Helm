@@ -63,6 +63,10 @@ curl -sS https://webinstall.dev/k9s | bash
 
 ```
 steps:
+
     - take new tab
-    - command ``` k9s```
+
+    - command k9s
+
+
 **resource**:  https://github.com/derailed/k9s
