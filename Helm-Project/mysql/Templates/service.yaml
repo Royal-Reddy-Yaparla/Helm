@@ -9,7 +9,7 @@ metadata:
     app: db
 spec:
   ports:
-  - port: 27017
+  - port: 3306
     name: mysql
   clusterIP: None
   selector:
