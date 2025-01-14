@@ -5,4 +5,4 @@ metadata:
   namespace: robokart
 data:
   CART_ENDPOINT: "cart:8080"
-  DB_HOST: "mysql"
+  DB_HOST: mysql
