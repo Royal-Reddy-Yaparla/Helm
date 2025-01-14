@@ -5,21 +5,21 @@ metadata:
   namespace: robokart
   labels: # these labels belong to deployment
     app: web
-    tier: web
     project: robokart
+    tier: web
 spec:
   replicas: 1
   selector:
     matchLabels: # these labels should match with pod
       app: web
-      tier: web
       project: robokart
+      tier: web
   template: # this is the pod definition
     metadata:
       labels:
         app: web
-        tier: web
         project: robokart
+        tier: web
     spec:
       volumes:
       - name: nginx-conf
@@ -44,3 +44,10 @@ spec:
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
           readOnly: true
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: web
+          items:
+            - key: nginx.conf
+              path: nginx.conf
