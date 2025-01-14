@@ -1,0 +1,216 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web
+  namespace: robokart
+data:
+  nginx.conf: |
+    user www-data;
+    worker_processes 4;
+    pid /var/run/nginx.pid;
+
+    events {
+      worker_connections 768;
+      # multi_accept on;
+    }
+
+    http {
+
+      ##
+      # Basic Settings
+      ##
+
+      sendfile on;
+      tcp_nopush on;
+      tcp_nodelay on;
+      keepalive_timeout 65;
+      types_hash_max_size 2048;
+      large_client_header_buffers 6 32k;
+      client_max_body_size 100m;
+
+      # server_names_hash_bucket_size 64;
+      # server_name_in_redirect off;
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+
+      ##
+      # Logging Settings
+      ##
+      access_log /var/log/nginx/access.log;
+      error_log /var/log/nginx/error.log debug; # change from debug to warn or error for production
+
+      ##
+      # Gzip Settings
+      ##
+      gzip on;
+      gzip_disable "msie6";
+
+      ##
+      # Virtual Host Configs
+      ##
+
+      include /etc/nginx/conf.d/*.conf;
+      include /etc/nginx/sites-enabled/*;
+
+      server {
+        listen       80;
+        server_name  localhost;
+
+        proxy_http_version 1.1;
+
+        #charset koi8-r;
+        #access_log  /var/log/nginx/host.access.log  main;
+        #error_log /dev/stdout debug;
+        #rewrite_log on;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+            ssi    on;
+        }
+
+        location /images/ {
+            expires 5s;
+            root   /usr/share/nginx/html;
+            try_files $uri /images/placeholder.png;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        location /api/catalogue/ {
+          proxy_pass http://catalogue:8080/;
+        }
+
+        location /api/user/ {
+          proxy_pass http://user:8080/;
+        }
+
+        location /api/cart/ {
+          proxy_pass http://cart:8080/;
+        }
+
+        location /api/shipping/ {
+          proxy_pass http://shipping:8080/;
+        }
+
+        location /api/payment/ {
+          proxy_pass http://payment:8080/;
+        }
+    }
+
+    } 
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: robokart
+  labels: # these labels are deployment labels
+    app: web
+    project: robokart
+    tier: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels: # these labels are used to find the pods
+      app: web
+      project: robokart
+      tier: web
+  template:
+    metadata:
+      labels: # these labels are pod labels
+        app: web
+        project: robokart
+        tier: web
+    spec:
+      containers:
+      - name: web
+        image: joindevops/web:v1
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: web
+          items:
+            - key: nginx.conf
+              path: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: robokart
+spec:
+  type: LoadBalancer
+  selector:
+    app: web
+    project: robokart
+    tier: web
+  ports:
+  - protocol: TCP
+    port: 80 #service-port
+    targetPort: 80 #container-port
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web
+  namespace: robokart
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 5
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web
+  namespace: robokart
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test,Project=robokart
+    alb.ingress.kubernetes.io/group.name: robokart
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "robokart.royalreddy.site"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: web
+            port:
+              number: 80
