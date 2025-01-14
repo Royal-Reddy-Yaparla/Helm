@@ -70,3 +70,13 @@ steps:
 
 
 **resource**:  https://github.com/derailed/k9s
+
+
+
+
+
+```
+ab -n 100000 -c 1000 -k http://robokart.royalreddy.site/
+
+
+```

@@ -2,36 +2,36 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cart
-  namespace: robokart 
-  labels:
-    name: cart
+  namespace: robokart
+  labels: # these labels are deployment labels
+    app: cart
     project: robokart
-    tier: app 
+    tier: app
 spec:
   replicas: {{ .Values.deployment.replicas }}
   selector:
-    matchLabels: # deployment-set labels
-      name: cart
+    matchLabels: # these labels are used to find the pods
+      app: cart
       project: robokart
       tier: app
-  template: # pod defination
+  template:
     metadata:
-      labels: # pod labels
-        name: cart
+      labels: # these labels are pod labels
+        app: cart
         project: robokart
         tier: app
     spec:
       containers:
       - name: cart
-        image: iamroyalreddy/cart:{{ .Values.deployment.imageVersion }}
-        imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+        image: "iamroyalreddy/cart:{{ .Values.deployment.imageVersion }}"
+        imagePullPolicy: Always
         resources:
           requests:
-            memory: "128Mi"
             cpu: "50m"
+            memory: "128Mi"
           limits:
+            cpu: "100m"
             memory: "256Mi"
-            cpu: "100m"  
         envFrom:
         - configMapRef:
             name: cart
