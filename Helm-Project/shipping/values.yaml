@@ -1,6 +1,0 @@
-deployment: 
-  imageVersion : v1
-  replicas: 1
-  imagePullPolicy: Always
-hpa:
-  averageUtilization: 70

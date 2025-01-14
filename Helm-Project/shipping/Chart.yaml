@@ -1,5 +1,0 @@
-apiVersion: v1 
-name: shipping
-version: 0.0.1 # this the chart version
-description:  this is the customised helm for shipping-service
-appVersion: v1
