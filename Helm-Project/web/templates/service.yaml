@@ -4,12 +4,13 @@ metadata:
   name: web
   namespace: robokart
 spec:
-  type: LoadBalancer # NodePort
+  type: LoadBalancer
   selector:
-    name: web
+    app: web
+    tier: web
     project: robokart
-    tier: web 
   ports:
-  - protocol: TCP
-    port: 80 #service-port
-    targetPort: 80 #container-port
+  - name: web-port
+    protocol: TCP
+    port: 80 # this port belongs to service
+    targetPort: 80 # this port belongs to container

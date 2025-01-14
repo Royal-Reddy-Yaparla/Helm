@@ -2,45 +2,45 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web
-  namespace: robokart 
-  labels:
-    name: web
+  namespace: robokart
+  labels: # these labels belong to deployment
+    app: web
+    tier: web
     project: robokart
-    tier: app 
 spec:
-  replicas: {{ .Values.deployment.replicas }}
+  replicas: 1
   selector:
-    matchLabels: # deployment-set labels
-      name: web
+    matchLabels: # these labels should match with pod
+      app: web
+      tier: web
       project: robokart
-      tier: app
-  template: # pod defination
+  template: # this is the pod definition
     metadata:
-      labels: # pod labels
-        name: web
+      labels:
+        app: web
+        tier: web
         project: robokart
-        tier: app
     spec:
-      containers:
-      - name: web
-        image: iamroyalreddy/web:{{ .Values.deployment.imageVersion }}
-        imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "50m"
-          limits:
-            memory: "256Mi"
-            cpu: "100m"  
-        volumeMounts:
-          - name: nginx-conf
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true 
       volumes:
       - name: nginx-conf
         configMap:
-            name: web
-            items:
-              - key: nginx.conf
-                path: nginx.conf   
+          name: nginx
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      containers:
+      - name: catalogue
+        image: "iamroyalreddy/web:{{ .Values.deployment.imageVersion }}"
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "68Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        volumeMounts:
+        - name: nginx-conf # name of the volume you created above
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
