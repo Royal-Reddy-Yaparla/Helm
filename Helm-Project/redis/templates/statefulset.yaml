@@ -2,32 +2,29 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis
-  namespace: robokart 
+  namespace: robokart
   labels:
-    name: redis
+    app: redis
     project: robokart
-    app: db
+    tier: db
 spec:
   selector:
     matchLabels:
-      name: redis
+      app: redis
       project: robokart
-      app: db # has to match .spec.template.metadata.labels
+      tier: db
   serviceName: "redis"
-  replicas: {{ .Values.statefulSet.replicas }} # by default is 1
-  minReadySeconds: 10 # by default is 0
+  replicas: {{ .Values.statefulset.replicas }}
   template:
     metadata:
       labels:
-        name: redis
+        app: redis
         project: robokart
-        app: db # has to match .spec.selector.matchLabels
+        tier: db
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
       - name: redis
         image: redis
-        imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
         volumeMounts:
         - name: redis
           mountPath: /data
