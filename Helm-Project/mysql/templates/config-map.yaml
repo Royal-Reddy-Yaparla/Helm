@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  namespace: robokart 
+  labels:
+    name: mysql
+    project: robokart
+    app: db
+data:
+  MYSQL_DATABASE: "cities"
