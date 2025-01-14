@@ -1,42 +1,45 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: redis
+  name: rabbitmq
   namespace: robokart 
   labels:
-    name: redis
+    name: rabbitmq
     project: robokart
     app: db
 spec:
   selector:
     matchLabels:
-      name: redis
+      name: rabbitmq
       project: robokart
       app: db # has to match .spec.template.metadata.labels
-  serviceName: "redis"
+  serviceName: "rabbitmq"
   replicas: {{ .Values.statefulSet.replicas }} # by default is 1
   minReadySeconds: 10 # by default is 0
   template:
     metadata:
       labels:
-        name: redis
+        name: rabbitmq
         project: robokart
         app: db # has to match .spec.selector.matchLabels
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-      - name: redis
-        image: redis
+      - name: rabbitmq
+        image: rabbitmq
         imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
+        envFrom:
+          - secretRef:
+              name: rabbitmq
         volumeMounts:
-        - name: redis
-          mountPath: /data
+        - name: rabbitmq
+          mountPath: /var/lib/rabbitmq
   volumeClaimTemplates:
   - metadata:
-      name: redis
+      name: rabbitmq
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "ebs-sc"
       resources:
         requests:
-          storage: 1Gi
+          storage: 2Gi
