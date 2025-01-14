@@ -30,7 +30,9 @@ Install the latest release of the driver.
 
 
 ### Attach Policy attach to Nodes IAM role for EBS csi driver access
-
+    - AmazonEBSCSIDriverPolicy
+    - AmazonEC2FullAccess
+    
 ### Create storage class
 
 ```
@@ -76,6 +78,7 @@ steps:
 
 
 ```
+sudo yum install httpd-tools -t
 ab -n 100000 -c 1000 -k http://robokart.royalreddy.site/
 
 
@@ -157,3 +160,83 @@ alb.ingress.kubernetes.io/tags: Environment=dev,Team=test,Project=robokart
 alb.ingress.kubernetes.io/group.name: robokart
 ```
 Note: here we are grouping same servers to avoid seperate load balancer to each
+
+---
+
+To install **wrk** on Amazon Linux, you can follow these steps:
+
+---
+
+### Apply load
+
+### 1. **Install Dependencies**
+Amazon Linux does not have `wrk` available in its default repositories, so you need to build it from source. Install the required dependencies:
+
+```bash
+sudo yum update -y
+sudo yum groupinstall "Development Tools" -y
+sudo yum install gcc git libgcc glibc-devel -y
+```
+
+---
+
+### 2. **Clone the `wrk` Repository**
+Clone the official `wrk` repository from GitHub:
+
+```bash
+git clone https://github.com/wg/wrk.git
+cd wrk
+```
+
+---
+
+### 3. **Build `wrk`**
+Run the build command to compile `wrk`:
+
+```bash
+make
+```
+
+---
+
+### 4. **Move the Binary to `/usr/local/bin`**
+Move the compiled binary to a directory in your `PATH`:
+
+```bash
+sudo mv wrk /usr/local/bin/
+```
+
+---
+
+### 5. **Verify Installation**
+Check if `wrk` is successfully installed:
+
+```bash
+wrk --version
+```
+
+---
+
+### 6. **Run a Test**
+You can now use `wrk` to perform load testing. For example:
+
+```bash
+wrk -t1000 -c1000 -d300s http://robokart.royalreddy.site
+
+wrk -t1000 -c1000 -d120s http://robokart.royalreddy.site/shipping
+
+```
+
+- `-t`: Number of threads.
+- `-c`: Number of concurrent connections.
+- `-d30s`: Duration of the test.
+
+---
+
+### Troubleshooting
+If you encounter errors during the build process, ensure you have all required dependencies installed and the `make` command available. You can also clean the repository and rebuild using:
+
+```bash
+make clean
+make
+```
