@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue
+  namespace: robokart 
+  labels:
+    name: catalogue
+    project: robokart
+    tier: app 
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels: # deployment-set labels
+      name: catalogue
+      project: robokart
+      tier: app
+  template: # pod defination
+    metadata:
+      labels: # pod labels
+        name: catalogue
+        project: robokart
+        tier: app
+    spec:
+      containers:
+      - name: catalogue
+        image: iamroyalreddy/catalogue:{{ .Values.deployment.imageVersion }}
+        imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "100m"  
+        envFrom:
+        - configMapRef:
+            name: catalogue
