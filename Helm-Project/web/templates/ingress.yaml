@@ -6,13 +6,13 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test,Project=Roboshop
+    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test,Project=Robokart
     alb.ingress.kubernetes.io/group.name: robokart
 spec:
   ingressClassName: alb
   rules:
   - host: "robokart.royalreddy.site"
-    http:
+    http: 
       paths:
       - pathType: Prefix
         path: "/"
