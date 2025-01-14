@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: mongodb
-        image: iamroyalreddy/mongodb:{{ .Values.statefulSet.imageVersion }}
+        image: "iamroyalreddy/mongodb:{{ .Values.statefulSet.imageVersion }}"
         imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
         volumeMounts:
         - name: mongodb
