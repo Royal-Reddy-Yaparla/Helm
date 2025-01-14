@@ -2,32 +2,29 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongodb
-  namespace: robokart 
+  namespace: robokart
   labels:
-    name: mongodb
+    app: mongodb
     project: robokart
-    app: db
+    tier: db
 spec:
   selector:
     matchLabels:
-      name: mongodb
+      app: mongodb
       project: robokart
-      app: db # has to match .spec.template.metadata.labels
+      tier: db
   serviceName: "mongodb"
-  replicas: {{ .Values.statefulSet.replicas }} # by default is 1
-  minReadySeconds: 10 # by default is 0
+  replicas: {{ .Values.statefulset.replicas }}
   template:
     metadata:
       labels:
-        name: mongodb
+        app: mongodb
         project: robokart
-        app: db # has to match .spec.selector.matchLabels
+        tier: db
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
       - name: mongodb
-        image: "iamroyalreddy/mongodb:{{ .Values.statefulSet.imageVersion }}"
-        imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
+        image: "iamroyalreddy/mongodb:{{ .Values.statefulset.imageVersion }}"
         volumeMounts:
         - name: mongodb
           mountPath: /data/db
@@ -40,5 +37,3 @@ spec:
       resources:
         requests:
           storage: 1Gi
-
-        # hel
