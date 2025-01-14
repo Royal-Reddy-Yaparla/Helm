@@ -2,36 +2,36 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user
-  namespace: robokart 
-  labels:
-    name: user
+  namespace: robokart
+  labels: # these labels are deployment labels
+    app: user
     project: robokart
-    tier: app 
+    tier: app
 spec:
   replicas: {{ .Values.deployment.replicas }}
   selector:
-    matchLabels: # deployment-set labels
-      name: user
+    matchLabels: # these labels are used to find the pods
+      app: user
       project: robokart
       tier: app
-  template: # pod defination
+  template:
     metadata:
-      labels: # pod labels
-        name: user
+      labels: # these labels are pod labels
+        app: user
         project: robokart
         tier: app
     spec:
       containers:
       - name: user
-        image: iamroyalreddy/user:{{ .Values.deployment.imageVersion }}
-        imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+        image: "iamroyalreddy/user:{{ .Values.deployment.imageVersion }}"
+        imagePullPolicy: Always
         resources:
           requests:
-            memory: "128Mi"
             cpu: "50m"
+            memory: "128Mi"
           limits:
+            cpu: "100m"
             memory: "256Mi"
-            cpu: "100m"  
         envFrom:
         - configMapRef:
             name: user

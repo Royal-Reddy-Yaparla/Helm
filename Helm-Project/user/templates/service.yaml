@@ -5,9 +5,9 @@ metadata:
   namespace: robokart
 spec:
   selector:
-    name: user
+    app: user
     project: robokart
-    tier: app 
+    tier: app
   ports:
   - protocol: TCP
     port: 8080 #service-port
