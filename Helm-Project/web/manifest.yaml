@@ -133,7 +133,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: joindevops/web:v1
+        image: iamroyalreddy/web:v1
         imagePullPolicy: Always
         resources:
           requests:
