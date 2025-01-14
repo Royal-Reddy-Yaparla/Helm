@@ -1,4 +1,4 @@
-statefulSetl: 
+statefulSet: 
   imageVersion : "v1"
   replicas: 1
   imagePullPolicy: "Always"
