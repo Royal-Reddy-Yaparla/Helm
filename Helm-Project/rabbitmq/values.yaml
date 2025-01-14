@@ -1,3 +1,2 @@
-statefulSet: 
-  replicas: 1
-  imagePullPolicy: "Always"
+statefulset:
+  replicas: 2

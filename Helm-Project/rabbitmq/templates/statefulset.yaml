@@ -2,35 +2,32 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: rabbitmq
-  namespace: robokart 
+  namespace: robokart
   labels:
-    name: rabbitmq
+    app: rabbitmq
     project: robokart
-    app: db
+    tier: db
 spec:
   selector:
     matchLabels:
-      name: rabbitmq
+      app: rabbitmq
       project: robokart
-      app: db # has to match .spec.template.metadata.labels
+      tier: db
   serviceName: "rabbitmq"
-  replicas: {{ .Values.statefulSet.replicas }} # by default is 1
-  minReadySeconds: 10 # by default is 0
+  replicas: {{ .Values.statefulset.replicas }}
   template:
     metadata:
       labels:
-        name: rabbitmq
+        app: rabbitmq
         project: robokart
-        app: db # has to match .spec.selector.matchLabels
+        tier: db
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
       - name: rabbitmq
         image: rabbitmq
-        imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
         envFrom:
-          - secretRef:
-              name: rabbitmq
+        - secretRef:
+            name: rabbitmq
         volumeMounts:
         - name: rabbitmq
           mountPath: /var/lib/rabbitmq
