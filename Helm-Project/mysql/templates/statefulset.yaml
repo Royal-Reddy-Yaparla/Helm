@@ -2,39 +2,36 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
-  namespace: robokart 
+  namespace: robokart
   labels:
-    name: mysql
+    app: mysql
     project: robokart
-    app: db
+    tier: db
 spec:
   selector:
     matchLabels:
-      name: mysql
+      app: mysql
       project: robokart
-      app: db # has to match .spec.template.metadata.labels
+      tier: db
   serviceName: "mysql"
-  replicas: {{ .Values.statefulSet.replicas }} # by default is 1
-  minReadySeconds: 10 # by default is 0
+  replicas: {{ .Values.statefulset.replicas }}
   template:
     metadata:
       labels:
-        name: mysql
+        app: mysql
         project: robokart
-        app: db # has to match .spec.selector.matchLabels
+        tier: db
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
       - name: mysql
-        image: iamroyalreddy/mysql:{{ .Values.statefulSet.imageVersion }}
-        imagePullPolicy: {{ .Values.statefulSet.imagePullPolicy }}
+        image: "iamroyalreddy/mysql:{{ .Values.statefulset.imageVersion }}"
         args:
-          - "--ignore-db-dir=lost+found"
+        - "--ignore-db-dir=lost+found"
         envFrom:
-          - secretRef:
-              name: mysql
-          - configMapRef:
-              name: mysql
+        - configMapRef:
+            name: mysql
+        - secretRef:
+            name: mysql
         volumeMounts:
         - name: mysql
           mountPath: /var/lib/mysql
